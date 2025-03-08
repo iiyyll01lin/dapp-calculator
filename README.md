@@ -80,11 +80,12 @@ nonodo
 
 ```bash
 # app backend skaffold
-cartesi create calculator --template python
+cartesi create dapp-calculator --template python
 
 # write code
 
 # build docker based app (compiles into RISC-V arch)
+cd dapp-calculator
 cartesi build
 
 # run app (docker compose up)
