@@ -88,8 +88,59 @@ cartesi create dapp-calculator --template python
 cd dapp-calculator
 cartesi build
 
+[+] Building 28.6s (16/16) FINISHED                                                                                                                                                            docker:default
+ => [internal] load build definition from Dockerfile                                                                                                                                                     0.0s
+ => => transferring dockerfile: 1.17kB                                                                                                                                                                   0.0s
+ => resolve image config for docker-image://docker.io/docker/dockerfile:1                                                                                                                                8.1s
+ => CACHED docker-image://docker.io/docker/dockerfile:1@sha256:4c68376a702446fc3c79af22de146a148bc3367e73c25a5803d453b6b3f722fb                                                                          0.0s
+ => [internal] load metadata for docker.io/cartesi/python:3.10-slim-jammy                                                                                                                                4.0s
+ => [internal] load .dockerignore                                                                                                                                                                        0.0s
+ => => transferring context: 2B                                                                                                                                                                          0.0s
+ => [2/8] ADD https://github.com/cartesi/machine-emulator-tools/releases/download/v0.14.1/machine-emulator-tools-v0.14.1.deb /                                                                           1.3s
+ => [1/8] FROM docker.io/cartesi/python:3.10-slim-jammy@sha256:a60d99fcd98d563e633bd06d28e2be94c7da45f335691edd9cbf3a0830694638                                                                          0.0s
+ => [internal] load build context                                                                                                                                                                        0.0s
+ => => transferring context: 2.55kB                                                                                                                                                                      0.0s
+ => CACHED [2/8] ADD https://github.com/cartesi/machine-emulator-tools/releases/download/v0.14.1/machine-emulator-tools-v0.14.1.deb /                                                                    0.0s
+ => CACHED [3/8] RUN dpkg -i /machine-emulator-tools-v0.14.1.deb   && rm /machine-emulator-tools-v0.14.1.deb                                                                                             0.0s
+ => CACHED [4/8] RUN <<EOF (set -e...)                                                                                                                                                                   0.0s
+ => CACHED [5/8] WORKDIR /opt/cartesi/dapp                                                                                                                                                               0.0s
+ => [6/8] COPY ./requirements.txt .                                                                                                                                                                      0.0s
+ => [7/8] RUN <<EOF (set -e...)                                                                                                                                                                         14.7s
+ => [8/8] COPY ./dapp.py .                                                                                                                                                                               0.0s
+ => exporting to image                                                                                                                                                                                   0.0s
+ => => exporting layers                                                                                                                                                                                  0.0s
+ => => writing image sha256:455cba2296977ed9e4b9f57957314447272464420a437e423ef9b067fbcb21b3                                                                                                             0.0s
+
+ 1 warning found (use docker --debug to expand):
+ - FromPlatformFlagConstDisallowed: FROM --platform flag should not use constant value "linux/riscv64" (line 2)
+copying from tar archive /tmp/input
+
+         .
+        / \
+      /    \
+\---/---\  /----\
+ \       X       \
+  \----/  \---/---\
+       \    / CARTESI
+        \ /   MACHINE
+         '
+
+[INFO  rollup_http_server] starting http dispatcher service...
+[INFO  rollup_http_server::http_service] starting http dispatcher http service!
+[INFO  actix_server::builder] starting 1 workers
+[INFO  actix_server::server] Actix runtime found; starting in Actix runtime
+[INFO  rollup_http_server::dapp_process] starting dapp: python3 dapp.py
+INFO:__main__:HTTP rollup_server url is http://127.0.0.1:5004
+INFO:__main__:Sending finish
+
+Manual yield rx-accepted (0x100000000 data)
+Cycles: 2896475264
+2896475264: e9f80131143de60418202425791d24408641c35331590c1cde068af83d47b8e0
+Storing machine: please wait
+
 # run app (docker compose up)
 cartesi run
+
 Attaching to prompt-1, validator-1
 validator-1  | 2025-03-08 13-11-59 info remote-cartesi-machine pid:144 ppid:85 Initializing server on localhost:0
 prompt-1     | Anvil running at http://localhost:8545
@@ -100,8 +151,9 @@ prompt-1     | Bundler running at http://localhost:8080/bundler/rpc
 prompt-1     | Paymaster running at http://localhost:8080/paymaster/
 prompt-1     | Press Ctrl+C to stop the node
 
-# test: send inputs
+# send inputs
 cartesi send generic
+
 > cartesi send generic
 ? Chain Foundry
 ? RPC URL http://127.0.0.1:8545
@@ -113,11 +165,11 @@ cartesi send generic
 ? Input (as string) 1+7
 ✔ Input sent: 0xe2a2ba347659e53c53f3089ff3268255842c03bafbbf185375f94c7a78f3f98a
 
-# test: receive outputs
+# receive outputs
 # send generic will send a notice containing a payload to the Rollup Server's /notice endpoint
-# Notice payloads will be returned in hexadecimal format; devs will need to decode these to convert them into plain text.
-# use:
-'http://localhost:8080/graphql'
+# Notice payloads will be returned in hexadecimal format,
+# devs will need to decode these to convert them into plain text
+# using: 'http://localhost:8080/graphql'
 
 # query: all notices sent to the rollup server
 query notices {
